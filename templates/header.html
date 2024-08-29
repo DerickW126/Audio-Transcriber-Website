@@ -1,0 +1,56 @@
+
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link href="{{ url_for('static', filename='css/swiper.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+ <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <!-- Favicon -->
+<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="https://subttify.com/static/images/fav-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://subttify.com/static/images/fav-16x16.png">
+<link rel="manifest" href="https://subttify.com/static/site.webmanifest">
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- OG Meta Tags to improve the way the post looks when you share the page on Facebook, Twitter, LinkedIn -->
+    <meta property="og:site_name" content="" /> Subttify <!-- website name -->
+    <meta property="og:site" content="" /> https://subttify.com <!-- website link -->
+    <meta property="og:title" content=""/> <!-- title shown in the actual shared post -->
+    <meta property="og:description" content="" /> <!-- description shown in the actual shared post -->
+    <meta property="og:image" content="" /> <!-- image link, make sure it's jpg -->
+    <meta property="og:url" content="" /> <!-- where do you want your post to link to -->
+    <meta name="twitter:card" content="summary_large_image"> <!-- to have large image post format in Twitter -->
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3666579337584135"
+     crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    let idleTimeout = null;
+    const idleDelay = 60 * 60 * 1000; // 1 hour in milliseconds
+
+    function resetIdleTimeout() {
+        // If a timeout has already been set, clear it
+        if (idleTimeout) clearTimeout(idleTimeout);
+
+        // Set a new timeout
+        idleTimeout = setTimeout(() => {
+            window.location.href = "/timeout";
+        }, idleDelay);
+    }
+
+    // Reset the idle timeout whenever there's a mouse move, key press, touch or scroll
+    window.addEventListener('mousemove', resetIdleTimeout);
+    window.addEventListener('keypress', resetIdleTimeout);
+    window.addEventListener('touchmove', resetIdleTimeout);
+    window.addEventListener('scroll', resetIdleTimeout);
+
+    // Set the initial timeout
+    resetIdleTimeout();
+</script>
+

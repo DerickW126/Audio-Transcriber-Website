@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Dashboard</title>
+  <!-- Styles -->
+
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link href="{{ url_for('static', filename='css/swiper.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+   <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+
+  <!-- Favicon -->
+<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="https://subttify.com/static/images/fav-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://subttify.com/static/images/fav-16x16.png">
+<link rel="manifest" href="https://subttify.com/static/site.webmanifest">
+
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav id="navbarExample" class="navbar navbar-expand-lg fixed-top navbar-light" aria-label="Main navigation">
+    <div class="container-fluid">
+
+      <!-- Image Logo -->
+      <a class="navbar-brand logo-image" href="/">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="alternative">
+      </a>
+
+      <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <style>
+        .file {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-bottom: 10px;
+        margin-left: 30px;
+     }
+      .myTable {
+        margin-left: 30px;
+       table-layout: fixed;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .myTable td {
+        word-wrap: break-word;
+      vertical-align: middle;
+        white-space: normal;
+        }
+        .logn-out {
+          display: none;
+        }
+
+        .logoutActive {
+          display: block;
+        }
+      </style>
+
+<div class="user-log">
+  <p id="logout">{{ email[0] }}</span>
+  <div class="logn-out" id="logoutBox">
+    <span id="userEmail">{{ email }}</span>
+    <a href="/logout" class="logout-btn"> 登出</a>
+  </div>
+</div> <!-- end of navbar-collapse -->
+      <script>
+        const logoutBox = document.querySelector("#logoutBox");
+        const logout = document.querySelector("#logout");
+        logout.addEventListener('click', function() {
+          logoutBox.classList.toggle("logoutActive");
+        });
+      </script>
+
+    </div> <!-- end of container -->
+  </nav> <!-- end of navbar -->
+  <!-- end of navigation -->
+  <!-- Start of left sidebar -->
+  <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+    <div class="sidebar-sticky">
+      <ul class="nav flex-column" class="d-flex align-items-center">
+        <li class="nav-item" class="d-flex align-items-center">
+          <!-- Button trigger modal -->
+          <a type="button" class="upload-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <i class="fa fa-upload" aria-hidden="true"></i>
+            上傳檔案
+          </a>
+          <br><br>
+        </li>
+        <li class="nav-item" class="d-flex align-items-center" style="margin-bottom: 30px;">
+          <!-- <i class="fa fa-transgender-alt" aria-hidden="true"></i> -->
+          <a href="https://subttify.com/dashboard">你的檔案</a>
+        </li>
+        <li class="nav-item">
+            <a>正在處理的檔案:</a>
+                <ul id="task-list">
+                </ul>
+        </li>
+
+      </ul>
+    </div>
+  </nav>
+
+<script>
+    // Replace this with the actual user id.
+    var uid = "{{user_id}}";
+    function updateTaskList() {
+    fetch("/user_tasks/" + uid)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            var task_states = data.active_tasks;
+            var deleted_task_states = data.deleted_tasks;
+
+            var taskList = document.getElementById("task-list");
+            while (taskList.firstChild) {
+                taskList.removeChild(taskList.firstChild);
+            }
+
+            // Display active tasks
+            for (var filename in task_states) {
+                var li = document.createElement("li");
+                li.textContent = filename + ": " + task_states[filename];
+                taskList.appendChild(li);
+            }
+
+            // Alert user about completed or failed tasks
+            for (var filename in deleted_task_states) {
+                var state = deleted_task_states[filename];
+                alert(filename + (state === 'SUCCESS' ? ' has completed successfully. Refresh to see your file.' : ' has failed. Please try upload it again.'));
+            }
+        });
+}
+    // Update the task list every 5 seconds.
+    setInterval(updateTaskList, 2500);
+    updateTaskList();
+</script>
+
+  <!-- End of left sidebar -->
+    
+  <main role="main" class="col-md-9 offset-md-2 bg-lighter px-4" style="height: calc(100% - 50px);">
+    <h2 class="title"> 你的檔案<span id="uploading-text"></span></h2>
+    {% if files %}
+    <table class="myTable">
+      {% for file in files %}
+      <tr>
+        <td>
+          <div class="file">
+            <a href="/display/{{ user_id }}/{{ file.file_name }}">
+              {{ file.actual_name }}
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>You have not uploaded any files yet.</p>
+    {% endif %}
+  </main>
+  </div>
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center" id="exampleModalLabel">上傳檔案</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="dataClose()"></button>
+        </div>
+
+       <form id="uploadForm" method="post" enctype="multipart/form-data" action="/upload">
+  <div class="modal-body">
+    <div class="languages">
+        <!--
+      <select name="language" id="slect">
+        <option value="0">Choose the language</option>
+        <option value="Taiwan">Taiwan</option>
+        <option value="English">English</option>
+        <option value="Germany">Germany</option>
+        <option value="Bangladeshi">Bangladeshi</option>
+      </select> -->
+    </div>
+    <div class="initial_prompt">
+      <input type="text" name="Initial_prompt" id="InitialPrompt" placeholder="輸入能幫助機器辨識的資訊，例如影片的背景資訊。如果影片內容是中文，請輸入 這是一個繁體中文的 ...">
+    </div>
+    <div class="checkbox-container" style="margin-bottom: 10px;">
+    <input type="checkbox" id="translate_to_english" name="translate_to_english" value="yes">
+    <label for="translate_to_english"> 要把轉錄的文字翻譯成英文嗎 ? </label>
+</div>
+
+    <div class="drag-area" id="dragArea">
+      <div class="container">
+        <div class="row bg-light p-3 pb-4 border border-light rounded shadow">
+          <div class="col-md-12 mb-3">
+          </div>
+          <div class="col-md-12">
+            <div class="file-upload-wrapper">
+              <div class="card card-body w-100 view file-upload">
+                <input type="file" id="audiofile" name="audioFile" class="file_upload">
+                <p class="file-upload-infos-message"> 點擊或是拖曳檔案上傳 </p>
+              </div>
+            </div>
+          </div>
+          <div class="mx-auto">
+            <audio id="track" src="" type="audio/mp3"></audio>
+            <div class="player d-none" style="width:100%;">
+              <div class="file-change">
+                <p onclick="dataClose()">更改檔案</p>
+              </div>
+              <div class="progress p-1">
+                <input id="timeslieder" class="timeslieder" type="range" value="0" min="0" max="100" step="0.001" />
+                <div class="time d-flex justify-content-around" style="width:100%;">
+                  <span id="currentTime" style="width: 30px;">00:00:00</span>
+                  <div id="pause" class="control-icon d-none"><i class="fa fa-pause"></i></div>
+                    <div id="start" class="control-icon"><i class="fa fa-play"></i></div>
+                          <span id="duration">00:00:00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+  <!--
+    <div class="process-text">
+      <div id="processModel" class="animate__animated animate__backInUp" >
+        Processing your file...
+      </div>
+    </div> -->
+    <div class="buttons">
+      <button type="submit" class="btn btn-danger" id="submit_btn" data-bs-dismiss="modal">上傳</button>
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="dataClose()">關閉</button>
+    </div>
+  </div>
+</form>
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', function() {
+        event.preventDefault();
+        alert("Uploading file. Don't Close this page!");
+        var uploadingText = document.getElementById('uploading-text');
+        uploadingText.textContent = ' - (Do not close this page) Uploading';
+
+        var dots = 0;
+        var interval = setInterval(function() {
+            dots = (dots + 1) % 4;
+            uploadingText.textContent = ' - (Do not close this page) Uploading' + '.'.repeat(dots);
+        }, 500);
+
+        var formData = new FormData(this);
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            clearInterval(interval); // Stop the dots animation
+            if (data === "success") {
+                uploadingText.textContent = ''; // Clear the text
+                alert("Upload successful! You can close it now!");
+            } else {
+                uploadingText.textContent = ''; // Clear the text
+                alert("Upload failed!");
+            }
+        });
+
+        return false; // To prevent the form from refreshing the page
+    });
+</script>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <style>
+    #processModel{
+      display: none;
+
+    }
+    .process-text p{
+      cursor: pointer;
+      font-size: 25px;
+      font-weight: 600;
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- <script>
+    $(document).ready(function() {
+      $('#uploadForm').submit(function(e) {
+        e.preventDefault(); // Prevent form submission
+        var formData = new FormData($(this)[0]);
+
+        $.ajax({
+          url: 'upload.php',
+          type: 'POST',
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function(response) {
+            alert('File uploaded successfully.');
+            $("#exampleModal").modal('hide');
+          },
+          error: function(xhr, status, error) {
+            alert('Error uploading file.');
+            console.log(error);
+          }
+        });
+      });
+    });
+  </script> -->
+
+  <script>
+    /* Audio enable & disable switch */
+    $("#audioUploadSwitch").change((e) => {
+      var value = e.target.checked;
+      var sampleUrl = "https://upload.wikimedia.org/wikipedia/commons/f/f3/Anthem_of_Europe_%28US_Navy_instrumental_short_version%29.ogg";
+      if (value == true) {
+        $("#track").attr("src", sampleUrl);
+        document.getElementById("track").load();
+        $("div.player").toggleClass('d-none');
+        $(".file-upload-wrapper").toggleClass('d-none');
+      } else {
+        $("div.player").toggleClass('d-none');
+        $(".file-upload-wrapper").toggleClass('d-none');
+      }
+    });
+
+
+
+    /* upload audio file */
+    /*
+    function handleFiles(event) {
+      var processModel = document.querySelector("#processModel");
+      var file = document.querySelector('input[type=file]').files[0];
+      var files = event.target.files;
+      $("#track").attr("src", URL.createObjectURL(files[0]));
+      document.getElementById("track").load();
+      console.log(event);
+      $("div.player").toggleClass('d-none');
+      $(".file-upload-wrapper").toggleClass('d-none');
+
+      if (file.type == "video/mp4" || file.type == "video/ogg" || file.type == "video/webm") {
+
+        alert("Successfully uploaded");
+        processModel.style.display = "block";
+      }
+
+      else if (file.type == "audio/mp3" || file.type == "audio/mpeg" || file.type == "audio/wav" || file.type == "audio/ogg") {
+
+        alert("Successfully uploaded");
+        processModel.style.display = "block";
+      }
+
+      else{
+        alert("Invaild file! please select a audio/video file");
+        var files = event.target.files;
+        var track = $("#track").attr("src", " ");
+        document.getElementById("track").load();
+        console.log(event);
+        $("div.player").toggleClass('d-none');
+        $(".file-upload-wrapper").toggleClass('d-none');
+      }
+    }*/
+    function handleFiles(event) {
+  var file = document.querySelector('input[type=file]').files[0];
+  var files = event.target.files;
+  $("#track").attr("src", URL.createObjectURL(files[0]));
+  document.getElementById("track").load();
+  console.log(event);
+  $("div.player").toggleClass('d-none');
+  $(".file-upload-wrapper").toggleClass('d-none');
+
+  var videoTypes = ["video/mp4", "video/ogg", "video/webm", "video/flv", "video/avi", "video/mov", "video/wmv", "video/mkv"];
+  var audioTypes = ["audio/mp3", "audio/mpeg", "audio/wav", "audio/ogg", "audio/flac", "audio/aac", "audio/wma", "audio/m4a", "audio/x-m4a"];
+
+  if (videoTypes.includes(file.type) || audioTypes.includes(file.type)) {
+    alert("Successfully uploaded");
+  } else {
+    alert("Invalid file! Please select an audio/video file");
+    var files = event.target.files;
+    var track = $("#track").attr("src", " ");
+    document.getElementById("track").load();
+    console.log(event);
+    $("div.player").toggleClass('d-none');
+    $(".file-upload-wrapper").toggleClass('d-none');
+  }
+}
+
+
+    document.getElementById("audiofile").addEventListener("change", handleFiles, false);
+
+    $('#track').each(function(index, audio) {
+      $(audio).on('canplay', function() {
+        console.log(audio.duration);
+        $("#duration")[0].innerHTML = sec2time(audio.duration);
+        $("#timeslieder")[0].max = audio.duration * 1000;
+      });
+    });
+
+    /* start button */
+    $("#start").click(function() {
+      $("#track")[0].play();
+      $(this).toggleClass('d-none');
+      $("#pause").toggleClass('d-none');
+    });
+    /* pause button */
+    $("#pause").click(function() {
+      $("#track")[0].pause();
+      $(this).toggleClass('d-none');
+      $("#start").toggleClass('d-none');
+    });
+    /* reset button */
+    $("#reset").click(function() {
+      $("#track")[0].load();
+      $("#start").toggleClass('d-none');
+      $("#pause").toggleClass('d-none');
+    });
+    /* timeupdate log */
+    $("#track")[0].addEventListener('timeupdate', function() {
+      var currentTimeSec = this.currentTime;
+      var currentTimeMs = this.currentTime * 1000;
+      $("#currentTime")[0].innerHTML = sec2time(currentTimeSec);
+      $("#timeslieder")[0].value = currentTimeMs;
+      initRangeEl();
+      var arrayTime = [sec2time(currentTimeSec), currentTimeMs];
+      console.log(currentTimeMs);
+    }, false);
+
+    function sec2time(timeInSeconds) {
+      var pad = function(num, size) {
+          return ('000' + num).slice(size * -1);
+        },
+        time = parseFloat(timeInSeconds).toFixed(3),
+        hours = Math.floor(time / 60 / 60),
+        minutes = Math.floor(time / 60) % 60,
+        seconds = Math.floor(time - minutes * 60),
+        milliseconds = time.slice(-3);
+      return pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2);
+    }
+
+    /* timeline slieder */
+    function valueTotalRatio(value, min, max) {
+      return ((value - min) / (max - min)).toFixed(2);
+    }
+
+    function getLinearGradientCSS(ratio, leftColor, rightColor) {
+      return [
+        '-webkit-gradient(',
+        'linear, ',
+        'left top, ',
+        'right top, ',
+        'color-stop(' + ratio + ', ' + leftColor + '), ',
+        'color-stop(' + ratio + ', ' + rightColor + ')',
+        ')'
+      ].join('');
+    }
+
+    function updateRangeEl(rangeEl) {
+      var ratio = valueTotalRatio(rangeEl.value, rangeEl.min, rangeEl.max);
+      rangeEl.style.backgroundImage = getLinearGradientCSS(ratio, '#3b87fd', '#fffcfc');
+    }
+
+    function initRangeEl() {
+      var rangeEl = document.getElementById("timeslieder");
+      updateRangeEl(rangeEl);
+      rangeEl.addEventListener("input", function(e) {
+        updateRangeEl(e.target);
+      });
+    }
+
+    $("#timeslieder")[0].addEventListener("input", function(e) {
+      updateRangeEl(e.target);
+      this.value = e.target.value;
+      $("#track")[0].currentTime = e.target.value / 1000;
+    });
+  </script>
+
+  <script>
+    function dataClose(){
+      var files = event.target.files;
+      $("#track").attr("src", " ");
+      document.getElementById("track").load();
+      console.log(event);
+      $("div.player").toggleClass('d-none');
+      $(".file-upload-wrapper").toggleClass('d-none');
+    }
+  </script>
+
+  <script>
+  [].slice.call(document.querySelectorAll(".upload-btn")).map(function (ubtn) {
+    ubtn.addEventListener('click', function(event){
+      //alert('data')
+      var files = event.target.files;
+      $("#track").attr("src", "");
+      document.getElementById("track").load();
+      $("div.player").addClass('d-none');
+      $(".file-upload-wrapper").removeClass('d-none');
+     });
+  });
+  </script>
+
+<!--   <script>
+    function processClose(){
+    
+      alert('test');
+    }
+  </script>
+ -->
+</body>
+
+</html>

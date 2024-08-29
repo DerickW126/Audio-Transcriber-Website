@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'header.html' %}
+    {% include '_navbar.html' %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="login" content="Log in to view your transcripts and start uploading!">
+    <meta name="author" content="Derick Wang">
+    <!-- Webpage Title -->
+    <title> Login </title>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <style>
+    .login-form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-form {
+        width: 300px;
+    }
+
+    .login-input,
+    .login-button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .social-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .social-button {
+        flex: 1;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .divider {
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid black;
+        line-height:0.1em;
+        margin: 10px 0 20px;
+    }
+
+    .divider span {
+        background:#fff;
+        padding:0 10px;
+    }
+    </style>
+</head>
+<body>
+    <div class="login-form-container">
+        <form class="login-form" method="post">
+            <input id="email" class="login-input" type="email" name="email" placeholder="Email" required>
+            <input id="password" class="login-input" type="password" name="password" placeholder="Password" required>
+            <button class="login-button btn btn-primary" type="submit" onclick="event.preventDefault(); login();">Login</button>
+            
+            <div class="divider"><span>OR</span></div>
+
+            <div class="social-buttons">
+                <button id = "google-sign-in" class="social-button btn btn-danger" type="button" href="{{ url_for('google_login') }}">Google</button>
+                <button class="social-button btn btn-primary" type="button">Facebook</button>
+            </div>
+            <p>Does not have an account yet? <a href="/register">Sign up</a></p>
+            <p>Forget your password? <a href="/reset_password"> Reset Password </a></p>
+        </form>
+        {% if error %}
+            <p><strong>Error:</strong> {{ error }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyCKJg0erzk1L7JKrJWYVXAxAZUpx3WXDiE",
+            authDomain: "subtitle-transcriber.firebaseapp.com",
+            databaseURL: "https://subtitle-transcriber-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "subtitle-transcriber",
+            storageBucket: "subtitle-transcriber.appspot.com",
+            messagingSenderId: "188011142085",
+            appId: "1:188011142085:web:5b7a83a2bf3461756889ac",
+            measurementId: "G-MBTBBE982J"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+function login() {
+  var email = document.getElementById('email').value;
+  var password = document.getElementById('password').value;
+
+  // Get the user's timezone
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+          var user = userCredential.user;
+          user.getIdToken(true).then((idToken) => {
+              // Send ID token to your backend via HTTPS along with the timezone
+              fetch('/sessionLogin', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  body: 'idToken=' + idToken + '&email=' + email + '&timezone=' + encodeURIComponent(userTimezone)
+              }).then((response) => {
+                  if (response.status == 200) {
+                      // Redirect to dashboard or something
+                      window.location.href = '/dashboard';
+                  } else {
+                      // Show error message
+                      alert('Fail to log in. Please try again or contact us');
+                      console.log('Failed to login');
+                  }
+              });
+          });
+      })
+      .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log(errorCode, errorMessage);
+          alert(errorMessage);
+      });
+}
+
+// Google Sign-in code
+const signInButton = document.getElementById('google-sign-in');
+signInButton.addEventListener('click', function() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider).then(function(result) {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      var token = result.credential.accessToken;
+
+      // Get the user's timezone
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      // Send the token and timezone to the server
+      fetch('/googleLogin', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'idToken=' + result.credential.idToken + '&email=' + result.user.email + '&timezone=' + encodeURIComponent(userTimezone)
+      }).then(response => {
+          if (response.ok) {
+              // If the server returns a successful response, redirect to /dashboard
+              window.location.href = '/dashboard';
+          } else {
+              throw new Error('Failed to verify ID token');
+          }
+      })
+      .catch(error => {
+          console.error('There has been a problem with your fetch operation:', error);
+      });
+  }).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // The email of the user's account used.
+      var email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      var credential = error.credential;
+      // ...
+  });
+});
+    </script>
+</body>
+</html>
+

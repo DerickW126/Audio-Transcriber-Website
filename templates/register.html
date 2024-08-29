@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'header.html' %}
+    {% include '_navbar.html' %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="login" content="Register an account to start transcribing!">
+    <meta name="author" content="Derick Wang">
+
+    <!-- Webpage Title -->
+    <title> Register </title>
+    
+    
+    <!-- Favicon  -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <style>
+    .form-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-form {
+        width: 300px;
+    }
+
+    .login-input,
+    .login-button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .social-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .social-button {
+        flex: 1;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .divider {
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid black;
+        line-height:0.1em;
+        margin: 10px 0 20px;
+    }
+
+    .divider span {
+        background:#fff;
+        padding:0 10px;
+    }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form id="registration-form" class="login-form" method="post">
+            <input class="login-input" type="email" id="email" name="email" placeholder="Email" required>
+            <input class="login-input" type="password" id="password" name="password" placeholder="Password" required>
+            <button class="login-button btn btn-primary" type="submit"> Register </button>
+        </form>
+    {% if error %}
+    <p>{{ error }}</p>
+    {% endif %}
+    </div>
+    <script>
+    // Your Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyCKJg0erzk1L7JKrJWYVXAxAZUpx3WXDiE",
+            authDomain: "subtitle-transcriber.firebaseapp.com",
+            databaseURL: "https://subtitle-transcriber-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "subtitle-transcriber",
+            storageBucket: "subtitle-transcriber.appspot.com",
+            messagingSenderId: "188011142085",
+            appId: "1:188011142085:web:5b7a83a2bf3461756889ac",
+            measurementId: "G-MBTBBE982J"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var auth = firebase.auth();
+
+    // Registration form submission
+    document.getElementById('registration-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+
+        auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            var user = userCredential.user;
+            user.sendEmailVerification()
+            .then(function() {
+                // Email sent.
+                console.log('Verification email sent.');
+                alert('Verification email sent!')
+                window.location.href = '/login';
+            })
+            .catch(function(error) {
+                // An error happened.
+                alert('Error sending verification email, please try again or contact us for support');
+                console.error('Error sending verification email:', error);
+            });
+        })
+        .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // Handle errors here.
+            alert(errorMessage);
+            console.error('Error creating user:', errorCode, errorMessage);
+        });
+    });
+    </script>
+</body>
+</html>
+
+

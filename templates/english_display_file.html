@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    {% include 'header.html' %}
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav id="navbarExample" class="navbar navbar-expand-lg fixed-top navbar-light" aria-label="Main navigation">
+        <div class="container-fluid">
+
+            <!-- Image Logo -->
+            <a class="navbar-brand logo-image" href="https://subttify.com">
+                <img src=" {{url_for('static', filename='images/logo.png') }}" alt="alternative"> </img>
+            </a>
+            <!--Text Logo - Use this if you don't have a graphic logo -->
+            <!-- <a class="navbar-brand logo-text" href="/"> Subttify </a> -->
+
+            <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+<div class="user-log">
+  <p id="logout">{{ email[0] }}</p>
+  <div class="logn-out" id="logoutBox">
+    <span id="userEmail">{{ email }}</span>
+    <a href="/logout" class="logout-btn">Log Out</a>
+  </div>
+</div> <!-- end of navbar-collapse -->
+
+        </div> <!-- end of container -->
+    </nav> <!-- end of navbar -->
+    <!-- end of navigation -->
+    <!-- Start of left sidebar -->
+    <nav class="d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+            <ul class="nav flex-column" class="d-flex align-items-center">
+                <li class="nav-item" class="d-flex align-items-center">
+                    <!-- Button trigger modal -->
+                    <a href="https://subttify.com/dashboard">
+                        <i class="fa fa-upload" aria-hidden="true"></i>
+                        Upload File
+                    </a>
+                    <br><br>
+                </li>
+                <li class="nav-item" class="d-flex align-items-center">
+                    <!-- <i class="fa fa-transgender-alt" aria-hidden="true"></i> -->
+                    <a href="https://subttify.com/dashboard">Your transcript</a>
+                </li>
+<br>
+        <li class="nav-item">
+            <a>Your Transcriptions in progress:</a>
+                <ul id="task-list">
+                </ul>
+        </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- End of left sidebar -->
+
+<script>
+    // Replace this with the actual user id.
+    var uid = "{{user_id}}";
+    function updateTaskList() {
+    fetch("/user_tasks/" + uid)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            var task_states = data.active_tasks;
+            var deleted_task_states = data.deleted_tasks;
+
+            var taskList = document.getElementById("task-list");
+            while (taskList.firstChild) {
+                taskList.removeChild(taskList.firstChild);
+            }
+
+            // Display active tasks
+            for (var filename in task_states) {
+                var li = document.createElement("li");
+                li.textContent = filename + ": " + task_states[filename];
+                taskList.appendChild(li);
+            }
+
+            // Alert user about completed or failed tasks
+            for (var filename in deleted_task_states) {
+                var state = deleted_task_states[filename];
+                alert(filename + (state === 'SUCCESS' ? ' has completed successfully.' : ' has failed. Please try upload it again.'));
+                location.reload();
+            }
+        });
+}
+    // Update the task list every 5 seconds.
+    setInterval(updateTaskList, 2500);
+    updateTaskList();
+</script>
+
+    <!-- Transcript Pgae Start -->
+    <main class="transcript-page">
+
+        <section>
+            <div class="transcript">
+
+                <div class="container">
+
+<div class="transcript-header" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 60px; margin-bottom: 20px; position: relative;">
+    <p style="margin: 0; flex-grow: 1; display: flex; align-items: center;">{{ actual_name }}</p>
+    <p style="position: absolute; bottom: 10px; right: 10px; margin: 0; font-size: 14px;">{{ upload_time }}</p>
+</div>
+
+                    <div class="transcript-contnet">
+                        <div class="audio-section">
+                            <audio id="audio" src="{{ url_for('serve_audio', filename=file_name) }}" preload="auto"
+                                style="display: none;" type="audio/mpeg"></audio>
+
+                            <div id="audio-box">
+                                <div class="options-wrapper d-flex">
+                                    <div class="col-md-6 left"></div>
+                                    <div class="col-md-6 right d-flex justify-content-end">
+                                        <div id="copy-btn" class="copy btn"><button>copy</button></div>
+                                        <div id="notification">Text copied to clipboard</div>
+                                        <div class="export btn" data-bs-toggle="modal"
+                                            data-bs-target="#exportmodal">
+                                            <button>export</button>
+                                        </div>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exportmodal" data-bs-backdrop="static"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Select File
+                                                            Type
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+    <div class="modal-body export-modal-body">
+        <a href="{{ url_for('download', filename=file_name) }}">
+            <button> Download </button>
+        </a>
+    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="delete-btn" class="delete btn btn-right-no-margin" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal"><button>delete</button></div>
+
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="deleteModal" data-bs-backdrop="static"
+                                            data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <!-- <h5 class="modal-title" id="staticBackdropLabel">Select File
+                                                            Type
+                                                        </h5> -->
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body export-modal-body">
+                                                        <h2>Are you confirm to delete?</h2>
+                                                    </div>
+                                                    <div class="modal-footer">
+  <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+  <button type="button" class="btn btn-primary" onclick="deleteFile('{{ file_name }}')">Yes</button> <!-- file_name should be the identifier for the file -->
+</div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                                <div id="controls-wrapper">
+                                    <span id="rw" class="fa fa-backward"></span>
+                                    <span id="play" class="fa fa-play"></span>
+                                    <span id="ff" class="fa fa-forward"></span>
+                                    <input id="progress" type="range" min="0" max="151" value="0">
+                                </div>
+                                <div id="time-wrapper">
+                                    <span id="time-played"></span>
+                                    <span id="end-time">02:31</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+
+  audio.addEventListener('loadedmetadata', function(){
+    var duration = audio.duration;
+    document.getElementById('progress').max = duration;
+    document.getElementById('end-time').textContent = new Date(duration * 1000).toISOString().substr(11, 8); // F
+  });
+
+  function deleteFile(fileName) {
+    // Send a request to the server to delete the file
+    $.ajax({
+      url: '/delete/' + fileName,
+      type: 'DELETE',
+      success: function() {
+        // Alert the user that the file has been deleted
+        alert('File deleted successfully.');
+
+        // Redirect to the dashboard page
+        window.location.href = '/dashboard'; // Replace with the actual URL of your dashboard page
+      },
+      error: function() {
+        alert('Failed to delete the file.');
+      }
+    });
+  }
+</script>
+
+                    <div class="transcript-content">
+                        {% for time_interval, subtitle in transcript_data %}
+                            <div class="row">
+                                <div class="col-lg-2 transcript-left-area">
+                                    <p class="w-8 text-sm text-center font-normal text-gray-500">
+                                        {{ time_interval.0 }} - {{ time_interval.1 }}
+                                    </p>
+                                </div>
+                                <div class="col-lg-10 transcript-right-area">
+                                    <p>
+                                        {{ subtitle }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const logoutBox = document.querySelector("#logoutBox");
+        const logout = document.querySelector("#logout");
+        logout.addEventListener('click', function () {
+            logoutBox.classList.toggle("logoutActive");
+        });
+
+
+        window.requestAnimationFrame =
+            window.requestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (cb) {
+                setTimeout(cb, 17);
+            };
+        var playBtn = document.getElementById("play");
+        var prog = document.getElementById("progress");
+        var playTime = document.getElementById("time-played");
+        var ff = document.getElementById("ff");
+        var rw = document.getElementById("rw");
+        var bars = document.getElementById("bars-box");
+
+        playBtn.addEventListener("click", function (e) {
+            if (audio.paused) {
+                audio.play();
+                playBtn.classList.remove("fa-play");
+                playBtn.classList.add("fa-pause");
+                bars.classList.add("active");
+            } else {
+                audio.pause();
+                playBtn.classList.remove("fa-pause");
+                playBtn.classList.add("fa-play");
+                bars.classList.remove("active");
+            }
+        });
+
+        rw.addEventListener("click", function (e) {
+            audio.currentTime -= 15;
+        });
+
+        ff.addEventListener("click", function (e) {
+            audio.currentTime += 15;
+        });
+
+        prog.addEventListener("input", function (e) {
+            audio.currentTime = prog.value;
+        });
+
+        function paddZero(i) {
+            if (i < 10) {
+                i = "0" + i;
+            }
+            return i;
+        }
+
+        function update() {
+            var played = audio.currentTime;
+            prog.value = audio.currentTime;
+            played =
+                played < 60
+                    ? "00:" + paddZero(Math.floor(played))
+                    : paddZero(Math.floor(played / 60)) +
+                    ":" +
+                    paddZero(Math.floor(played % 60));
+            playTime.innerText = played;
+            if (audio.currentTime >= 151) {
+                playBtn.classList.remove("fa-pause");
+                playBtn.classList.add("fa-play");
+                audio.pause();
+                bars.classList.remove('active');
+            }
+            requestAnimationFrame(update);
+        }
+
+        update();
+
+    </script>
+
+    <script>
+        //Copy to clipboard functionality
+        function copyToClipboard(text) {
+            var textArea = document.createElement('textarea');
+            textArea.value = text;
+
+            textArea.style.position = 'fixed';
+            textArea.style.top = '-9999px';
+            document.body.appendChild(textArea);
+
+
+            textArea.select();
+            document.execCommand('copy');
+
+            document.body.removeChild(textArea);
+            var notification = document.getElementById('notification');
+            notification.classList.add('show');
+            setTimeout(function () {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            let text = '';
+            document.querySelectorAll('.transcript-right-area').forEach(e => {
+                text = text + ' ' + e.innerText;
+            })
+            copyToClipboard(text);
+        })
+    </script>
+
+</body>
+
+</html>
