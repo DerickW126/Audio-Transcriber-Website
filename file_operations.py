@@ -7,7 +7,7 @@ import stable_whisper
 UPLOAD_FOLDER = '/var/www/html/flaskapp/upload_folder'
 DOWNLOAD_FOLDER = '/var/www/html/flaskapp/download_folder'
 dic = {"max_line_width": 40, "max_line_count": 40, "highlight_words": ""}
-
+#remove file
 def remove_file():
 	for filename in os.listdir(UPLOAD_FOLDER):
 	    filepath = os.path.join(UPLOAD_FOLDER, filename)
