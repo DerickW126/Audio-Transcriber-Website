@@ -11,3 +11,6 @@ docs/_build/
 subtitle-transcriber-firebase-adminsdk-dee66-2a7f4716bb.json
 celerybeat-schedule
 .env
+pycdc/
+decompiled_flaskapp.py
+flaskapp.cpython-310.pyc
