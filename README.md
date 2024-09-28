@@ -76,6 +76,7 @@ FLASK_ENV=development
 FIREBASE_CREDENTIALS=path/to/firebase_credentials.json
 ```
 
+Set upload_folder and download_folder to your desired location
 6. Run the application:
 
 ```bash
