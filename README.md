@@ -11,7 +11,6 @@ Subttify is a Flask-based web application that allows users to upload audio file
 - **Real-Time Notifications:** Users are notified when their transcription has been successfully processed.
 - **User Dashboard:** Displays a list of uploaded files and their statuses.
 - **Google Authentication:** Users can sign in using their Google accounts via Firebase Authentication.
-- **Profile Management:** Users can view and manage their profile, including their profile picture and email.
 
 ## Demo / Tutorial Video
 
@@ -38,16 +37,15 @@ Click the image to watch the demo video on YouTube.
 - Python 3.8+
 - Firebase Project (with Authentication and Firestore enabled)
 - OpenAI Whisper Model (ensure you have the appropriate setup to use this model locally)
-- A SendGrid account for email notifications (or any other email service provider)
 
 ### Installation
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/your-username/subttify.git
-   cd subttify
-   ```
+```bash
+git clone https://github.com/your-username/subttify.git
+cd subttify
+```
    
 2. Create a virtual environment and activate it:
 
@@ -71,9 +69,25 @@ pip install -r requirements.txt
 
 Create a .env file in the project root and add the following environment variables:
 ```bash
-FLASK_APP=flaskapp
-FLASK_ENV=development
-FIREBASE_CREDENTIALS=path/to/firebase_credentials.json
+# Flask Secret Key
+SECRET_KEY=your-secret-key-here
+
+# Celery Configuration
+CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_RESULT_BACKEND=redis://localhost:6379/0
+
+# Firebase Configuration
+FIREBASE_API_KEY=your-firebase-api-key
+FIREBASE_AUTH_DOMAIN=your-firebase-auth-domain
+FIREBASE_DATABASE_URL=your-firebase-database-url
+FIREBASE_PROJECT_ID=your-firebase-project-id
+FIREBASE_STORAGE_BUCKET=your-firebase-storage-bucket
+FIREBASE_MESSAGING_SENDER_ID=your-firebase-messaging-sender-id
+FIREBASE_APP_ID=your-firebase-app-id
+FIREBASE_MEASUREMENT_ID=your-firebase-measurement-id
+
+# Path to Firebase Admin SDK Credentials JSON
+FIREBASE_ADMIN_CREDENTIALS=path/to/your/firebase-adminsdk-credentials.json
 ```
 
 Set upload_folder and download_folder to your desired location
