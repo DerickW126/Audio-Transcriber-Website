@@ -1,6 +1,12 @@
-# Subttify
+# [Subttify](https://subttify.com) <img align="right" src="static/images/logo.png" alt="Subttify Logo" width="40">
 
-Subttify is a Flask-based web application that allows users to upload audio files, transcribe them using OpenAI's Whisper model, and optionally translate the transcription into English. The application integrates Google Firebase for user authentication and cloud storage.
+Subttify is a Flask-based web application that allows users to upload audio files, transcribe them into substitle file (.srt) using OpenAI's Whisper model, and optionally translate the transcription into English. The application integrates Google Firebase for user authentication and cloud storage.
+
+## Demo / Tutorial Video
+
+Click the image to watch the demo video on YouTube.
+
+[![Watch the Demo](https://img.youtube.com/vi/i66a7zLniWQ/maxresdefault.jpg)](https://youtu.be/i66a7zLniWQ)
 
 ## Features
 
@@ -11,12 +17,6 @@ Subttify is a Flask-based web application that allows users to upload audio file
 - **Real-Time Notifications:** Users are notified when their transcription has been successfully processed.
 - **User Dashboard:** Displays a list of uploaded files and their statuses.
 - **Google Authentication:** Users can sign in using their Google accounts via Firebase Authentication.
-
-## Demo / Tutorial Video
-
-[![Watch the Demo](https://img.youtube.com/vi/i66a7zLniWQ/maxresdefault.jpg)](https://youtu.be/i66a7zLniWQ)
-
-Click the image to watch the demo video on YouTube.
 
 ## Tech Stack
 
@@ -43,8 +43,7 @@ Click the image to watch the demo video on YouTube.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/subttify.git
-cd subttify
+git clone https://github.com/DerickW126/Audio-Transcriber-Website.git
 ```
    
 2. Create a virtual environment and activate it:
@@ -90,7 +89,6 @@ FIREBASE_MEASUREMENT_ID=your-firebase-measurement-id
 FIREBASE_ADMIN_CREDENTIALS=path/to/your/firebase-adminsdk-credentials.json
 ```
 
-Set upload_folder and download_folder to your desired location
 6. Run the application:
 
 ```bash
