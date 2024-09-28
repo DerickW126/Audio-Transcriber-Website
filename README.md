@@ -2,8 +2,6 @@
 
 Subttify is a Flask-based web application that allows users to upload audio files, transcribe them using OpenAI's Whisper model, and optionally translate the transcription into English. The application integrates Google Firebase for user authentication and cloud storage.
 
-![Demo Video](static/subttify_sNflLXjy.mp4)
-
 ## Features
 
 - **File Upload:** Users can upload audio files for transcription.
@@ -14,6 +12,12 @@ Subttify is a Flask-based web application that allows users to upload audio file
 - **User Dashboard:** Displays a list of uploaded files and their statuses.
 - **Google Authentication:** Users can sign in using their Google accounts via Firebase Authentication.
 - **Profile Management:** Users can view and manage their profile, including their profile picture and email.
+
+## Demo / Tutorial Video
+
+[![Watch the Demo](https://img.youtube.com/vi/i66a7zLniWQ/maxresdefault.jpg)](https://youtu.be/i66a7zLniWQ)
+
+Click the image to watch the demo video on YouTube.
 
 ## Tech Stack
 
