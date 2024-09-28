@@ -1,7 +1,6 @@
 import re
 import os
 def reverse_readline(filename, buf_size=8192):
-    """A generator that returns the lines of a file in reverse order"""
     with open(filename, 'r') as fh:
         segment = None
         offset = 0

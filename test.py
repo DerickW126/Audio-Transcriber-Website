@@ -2,7 +2,6 @@ import stable_whisper
 '''
 model = stable_whisper.load_model('tiny')
 audio = 'upload_folder/testt.mp3'
-initial_prompt = ""
 result = model.transcribe(audio, verbose=False, initial_prompt=initial_prompt)
 result.to_srt_vtt(audio[:-4] + '.srt', word_level=False)
 '''
