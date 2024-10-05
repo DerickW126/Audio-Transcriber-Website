@@ -1,6 +1,6 @@
-# [Subttify] <img align="left" src="static/images/logo.png" alt="Subttify Logo" width="80">
+# Subttify <img align="right" src="static/images/logo.png" alt="Subttify Logo" width="80">
 
-Subttify is a Flask-based web application that allows users to upload audio files, transcribe them into substitle file (.srt) using OpenAI's Whisper model, and optionally translate the transcription into English. The application integrates Google Firebase for user authentication and cloud storage.
+Subttify is a Flask-based web application that allows users to upload audio files, transcribe them into subtitle files (.srt) using OpenAI's Whisper model, and optionally translate the transcription into English. The application integrates Google Firebase for user authentication and cloud storage.
 
 ## Demo / Tutorial Video
 
